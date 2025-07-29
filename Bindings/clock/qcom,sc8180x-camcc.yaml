@@ -1,28 +1,29 @@
 # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 %YAML 1.2
 ---
-$id: http://devicetree.org/schemas/clock/qcom,sm8150-camcc.yaml#
+$id: http://devicetree.org/schemas/clock/qcom,sc8180x-camcc.yaml#
 $schema: http://devicetree.org/meta-schemas/core.yaml#
 
-title: Qualcomm Camera Clock & Reset Controller on SM8150
+title: Qualcomm Camera Clock & Reset Controller on SC8180X
 
 maintainers:
   - Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 
 description: |
   Qualcomm camera clock control module provides the clocks, resets and
-  power domains on SM8150.
+  power domains on SC8180X.
 
-  See also: include/dt-bindings/clock/qcom,sm8150-camcc.h
+  See also: include/dt-bindings/clock/qcom,sc8180x-camcc.h
 
 properties:
   compatible:
-    const: qcom,sm8150-camcc
+    const: qcom,sc8180x-camcc
 
   clocks:
     items:
-      - description: Board XO source
       - description: Camera AHB clock from GCC
+      - description: Board XO source
+      - description: Sleep clock source
 
   power-domains:
     maxItems: 1
@@ -39,7 +40,6 @@ required:
   - clocks
   - power-domains
   - required-opps
-  - '#power-domain-cells'
 
 allOf:
   - $ref: qcom,gcc.yaml#
@@ -48,16 +48,18 @@ unevaluatedProperties: false
 
 examples:
   - |
-    #include <dt-bindings/clock/qcom,gcc-sm8150.h>
+    #include <dt-bindings/clock/qcom,gcc-sc8180x.h>
     #include <dt-bindings/clock/qcom,rpmh.h>
     #include <dt-bindings/power/qcom-rpmpd.h>
     clock-controller@ad00000 {
-      compatible = "qcom,sm8150-camcc";
-      reg = <0x0ad00000 0x10000>;
-      clocks = <&rpmhcc RPMH_CXO_CLK>,
-               <&gcc GCC_CAMERA_AHB_CLK>;
-      power-domains = <&rpmhpd SM8150_MMCX>;
+      compatible = "qcom,sc8180x-camcc";
+      reg = <0x0ad00000 0x20000>;
+      clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+               <&rpmhcc RPMH_CXO_CLK>,
+               <&sleep_clk>;
+      power-domains = <&rpmhpd SC8180X_MMCX>;
       required-opps = <&rpmhpd_opp_low_svs>;
+
       #clock-cells = <1>;
       #reset-cells = <1>;
       #power-domain-cells = <1>;
